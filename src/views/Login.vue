@@ -37,13 +37,21 @@
             </div>
 
         </div>
+        <my-modal v-show="displayShow">{{errContent}}</my-modal>
     </div>
 </template>
 
 <script>
+import MyModal from '../components/common/MyModal'
 export default {
+  components:{
+      MyModal
+  },
   data() {
       return {
+        errContent:'',
+        displayShow:false,
+        listData:[],
         value:null,
         isFocus1: false,
         isFocus2: false,
@@ -67,10 +75,27 @@ export default {
       submitBtn(){
         this.user.username = this.valueName;
         this.user.password = this.valuePassword;
-        this.$axios.post('/user/login',this.user).then((res)=>{
-          console.log(res);
-        //   this.$router.push('/about')
-        })
+        if(!this.user.username && !this.user.password) {
+          this.displayShow = true;
+          this.errContent='content is\'t allowed null'
+          setTimeout(()=>{
+            this.displayShow = false
+          },2000)
+        }else{
+          this.$axios.post('/user/login',this.user).then((res)=>{
+            this.listData = res.data;
+            console.log(this.listData);
+            if(this.listData.status == 200){
+              this.$router.push('/about')
+            }else{
+              this.displayShow = true;
+              this.errContent='username or password is wrong';
+              setTimeout(()=>{
+                this.displayShow = false
+              },2000)
+            }  
+          })
+        }    
       }
   }
 }
