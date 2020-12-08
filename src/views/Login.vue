@@ -86,6 +86,7 @@ export default {
             this.listData = res.data;
             console.log(this.listData);
             if(this.listData.status == 200){
+              localStorage.setItem('token',this.listData.data.userList.token)
               this.$router.push('/about')
             }else{
               this.displayShow = true;
